@@ -3,6 +3,7 @@ from discord.ext import commands
 from googletrans import Translator
 from googletrans import LANGUAGES
 
+# NOTE: Use googletrans 3.1.0a0 or later to resolve "'None' type has no member 'Group'" error
 
 class Translate(commands.Cog):
     def __init__(self, bot):
