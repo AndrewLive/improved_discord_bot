@@ -12,7 +12,7 @@ class Translate(commands.Cog):
 
     @commands.command()
     async def translate(self, ctx, *args):
-        print('Translate Command!')
+        # print('Translate Command!')
         if ctx.message.reference == None:
             await ctx.reply("Error: No message to translate", mention_author=False)
             return
