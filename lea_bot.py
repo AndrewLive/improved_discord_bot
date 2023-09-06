@@ -5,6 +5,7 @@ import logging
 
 from cogs.Translate import Translate
 from cogs.Minecraft import Minecraft
+from cogs.SunTzu import SunTzu
 
 
 load_dotenv()
@@ -26,6 +27,7 @@ async def on_ready():
     print('Adding cogs...')
     await bot.add_cog(Translate(bot))
     await bot.add_cog(Minecraft(bot))
+    await bot.add_cog(SunTzu(bot))
 
     print('Logged in as {0}!'.format(bot.user))
 
@@ -36,7 +38,7 @@ async def on_ready():
 @bot.event
 async def on_message(message):
     # DEBUG REMOVE LATER
-    print(str(message.author) + ": " + message.content)
+    # print(str(message.author) + ": " + message.content)
 
     await bot.process_commands(message)
 
