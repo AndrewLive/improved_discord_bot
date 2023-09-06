@@ -1,12 +1,18 @@
 import os, discord
 from discord.ext import commands
 from mcstatus import JavaServer
+from dotenv import load_dotenv
 
 class Minecraft(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.ip = "127.0.0.1"
+        self.port = 25575
         self.server = JavaServer.lookup(self.ip)
+
+        load_dotenv('../.env')
+        self.rconPass = os.getenv('RCON')
+
         try:
             self.query = self.server.query()
         except:
@@ -38,3 +44,21 @@ class Minecraft(commands.Cog):
             embed.add_field(name="Unable to reach server", value=e)
 
         await ctx.send(embed=embed)
+
+
+    @commands.command(aliases=["rcon"])
+    async def rconsay(self, ctx, *args):
+        try:
+            self.server.ping()
+        except:
+            ctx.send("Unable to reach server")
+            return
+        
+        msg = ' '.join(args)
+        command = f'mcrcon -H {self.ip} -P {self.port} -p {self.rconPass} "say <Discord: {ctx.message.author.name}> {msg}"'
+        os.system(command)
+
+        # print(command)
+
+        await ctx.send(f'Sent message to server: <Discord: {ctx.message.author.name}> {msg}')
+        return
