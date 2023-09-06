@@ -26,8 +26,11 @@ bot = commands.Bot(command_prefix = PREFIX, intents = INTENTS)
 async def on_ready():
     print('Adding cogs...')
     await bot.add_cog(Translate(bot))
+    print('Translate Cog added successfully!')
     await bot.add_cog(Minecraft(bot))
+    print('Minecraft Cog added successfully!')
     await bot.add_cog(SunTzu(bot))
+    print('Sun Tzu Cog added successfully!')
 
     print('Logged in as {0}!'.format(bot.user))
 
