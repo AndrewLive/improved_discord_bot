@@ -7,9 +7,12 @@ class Minecraft(commands.Cog):
         self.bot = bot
         self.ip = "127.0.0.1"
         self.server = JavaServer.lookup(self.ip)
-        self.query = self.server.query()
+        try:
+            self.query = self.server.query()
+        except:
+            print("server cannot be reached at this time")
 
-    @commands.command()
+    @commands.command(aliases=["mc"])
     async def minecraft(self, ctx, *args):
         # check if in relevant server
         whitelist = {902602831675138108:"AGD", 960413256814592010:"Denny's"}
@@ -22,6 +25,7 @@ class Minecraft(commands.Cog):
         embed.set_thumbnail(url="https://i.kym-cdn.com/photos/images/newsfeed/002/378/234/23a.png")
         try:
             # build embed
+            self.query = self.server.query()
             embed.add_field(name="IP", value="nile.puresynergy.com:1987", inline=False)
             embed.add_field(name="Version", value=self.query.software.version, inline=False)
             embed.add_field(name="MOTD", value=self.query.motd.raw, inline=False)
