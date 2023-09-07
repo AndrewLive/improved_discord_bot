@@ -1,8 +1,9 @@
 import os, discord
+from typing import Any, Coroutine
 from discord.ext import commands, tasks
 from mcstatus import JavaServer
 from dotenv import load_dotenv
-import asyncio
+import re
 
 class Minecraft(commands.Cog):
     def __init__(self, bot):
@@ -19,7 +20,14 @@ class Minecraft(commands.Cog):
         except:
             print("server cannot be reached at this time")
 
-        asyncio.run(self.minecraftLoop())
+        # minecraft -> discord chat
+        self.logPath = "/mnt/c/Users/Vinh/DarkRPG/data/logs/latest.log"
+        self.logTime = os.path.getmtime(self.logPath)
+        self.minecraftChatChannel = self.bot.get_channel(1140974218897522788)
+        self.minecraftChat.start()
+
+    def cog_unload(self):
+        self.minecraftChat.cancel()
 
 
 
@@ -73,17 +81,34 @@ class Minecraft(commands.Cog):
     # TO DO: add ability to communicate from minecraft to discord
     # Read output logs of mc server to do this
     # Or try PyMChat
-    async def logMonitorLoop(self):
-        x = 1
-        while True:
-            print(x)
-            x += 1
-            asyncio.sleep(1)
+    @tasks.loop(seconds=0.5)
+    async def minecraftChat(self):
+        try:
+            self.server.ping()
+        except:
+            return
+        
+        currentLogTime = os.path.getmtime(self.logPath)
+        if currentLogTime <= self.logTime:
+            return
+        
+        self.logTime = currentLogTime
 
-    async def minecraftLoop(self):
-        print("initializing Minecraft Loops")
-        logMonitor = asyncio.create_task(self.logMonitorLoop())
-        await asyncio.wait([logMonitor])
+        with open('/mnt/c/Users/Vinh/DarkRPG/data/logs/latest.log', 'r') as f:
+            line = f.readlines()[-1].strip('\n')
+            msg = line[33:]
+
+        # print(f'Line: {line}')
+        # print(f'Msg: {msg}')
+
+        if re.match(r"<.+> .+", msg):
+            # print('Valid message!')
+            pass
+        if re.match(r"<.+> l\.chat .+", msg):
+            # print('Valid command!')
+            msg = msg.replace('l.chat ', '')
+            await self.minecraftChatChannel.send(f'Received message: {msg}')
+        
         return
-            
+    
     
