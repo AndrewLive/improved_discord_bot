@@ -2,11 +2,6 @@ import os, discord
 from discord.ext import commands, tasks
 from mcstatus import JavaServer
 from dotenv import load_dotenv
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
-import time
-from multiprocessing import Process
-import re
 import asyncio
 
 class Minecraft(commands.Cog):
@@ -24,9 +19,7 @@ class Minecraft(commands.Cog):
         except:
             print("server cannot be reached at this time")
 
-        # read chat real time
-        self.observerProcess = Process(target=self.observerLoop)
-        self.observerProcess.start()
+        asyncio.run(self.minecraftLoop())
 
 
 
@@ -80,39 +73,17 @@ class Minecraft(commands.Cog):
     # TO DO: add ability to communicate from minecraft to discord
     # Read output logs of mc server to do this
     # Or try PyMChat
-    class MyHandler(FileSystemEventHandler):
-        def on_modified(self, event):
-            print(f'event type: {event.event_type}  path : {event.src_path}')
-            if event.src_path == "/mnt/c/Users/Vinh/DarkRPG/data/logs/latest.log":
-                with open('/mnt/c/Users/Vinh/DarkRPG/data/logs/latest.log', 'r') as f:
-                    line = f.readlines()[-1].strip('\n')
-                    msg = line[33:]
+    async def logMonitorLoop(self):
+        x = 1
+        while True:
+            print(x)
+            x += 1
+            asyncio.sleep(1)
 
-                print(f'Line: {line}')
-                print(f'Msg: {msg}')
-                if re.match(r"<.+> .+", msg):
-                    print('Valid message!')
-                if re.match(r"<.+> l\.chat .+", msg):
-                    print('Valid command!')
-
-
-    def observerLoop(self):
-        path = (r"/mnt/c/Users/Vinh/DarkRPG/data/logs")
-        event_handler = self.MyHandler() 
-        observer = Observer()
-        observer.schedule(event_handler, path, recursive=False)
-
-        observer.start()  #for starting the observer thread
-        try:
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            observer.stop()
-        observer.join()
-
-
-    @commands.Cog.listener()
-    async def on_ready(self):
+    async def minecraftLoop(self):
+        print("initializing Minecraft Loops")
+        logMonitor = asyncio.create_task(self.logMonitorLoop())
+        await asyncio.wait([logMonitor])
         return
             
     
