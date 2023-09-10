@@ -24,7 +24,7 @@ INTENTS.message_content = True
 
 PREFIX = "l."
 
-bot = commands.Bot(command_prefix = PREFIX, intents = INTENTS, help_command=CustomHelpCommand())
+bot = commands.Bot(command_prefix = PREFIX, intents = INTENTS, help_command=commands.DefaultHelpCommand(show_parameter_descriptions=False))
 
 
 @bot.event
