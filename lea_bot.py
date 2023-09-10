@@ -1,7 +1,12 @@
 import os, discord
+from typing import Any, List, Mapping, Optional
+from discord.ext.commands.cog import Cog
+from discord.ext.commands.core import Command, Group
 from dotenv import load_dotenv
 from discord.ext import commands, tasks
 import logging
+
+from CustomHelpCommand import CustomHelpCommand
 
 from cogs.Translate import Translate
 from cogs.Minecraft import Minecraft
@@ -19,7 +24,7 @@ INTENTS.message_content = True
 
 PREFIX = "l."
 
-bot = commands.Bot(command_prefix = PREFIX, intents = INTENTS)
+bot = commands.Bot(command_prefix = PREFIX, intents = INTENTS, help_command=CustomHelpCommand())
 
 
 @bot.event
