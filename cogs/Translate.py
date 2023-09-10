@@ -12,6 +12,20 @@ class Translate(commands.Cog):
 
     @commands.command()
     async def translate(self, ctx, *args):
+        """
+        Translates the message the invoker replied to
+
+        Usage:
+            l.translate <src> <dest>
+
+        Note:
+            Input languages must be in Google Language Code format (https://developers.google.com/admin-sdk/directory/v1/languages)
+        
+        Arguments:
+            src: Language of the original message. Auto detects language if none given
+            dest: Intended destination language. Defaults to English
+        """
+
         # print('Translate Command!')
         if ctx.message.reference == None:
             await ctx.reply("Error: No message to translate", mention_author=False)
