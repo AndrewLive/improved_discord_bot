@@ -11,7 +11,11 @@ class SunTzu(commands.Cog):
         self.num_lines = len(self.lines)
 
     @commands.command(aliases=['st'])
-    async def suntzu(self, ctx, *args):
+    async def suntzu(self, ctx):
+        """
+        Gives a 100% real quote from ancient Chinese general Sun Tzu
+        """
+
         line = random.choice(self.lines)
         sun_tzu_image = 'https://almabooks.com/wp-content/uploads/2019/08/Sun-Tzu.jpg'
 
@@ -27,7 +31,11 @@ class SunTzu(commands.Cog):
 
 
     @commands.command(aliases=['reloadst', 'rst'])
-    async def reloadsuntzu(self, ctx, *args):
+    async def reloadsuntzu(self, ctx):
+        """
+        Reloads the list of quotes that Sun Tzu can give (only usable by bot owner)
+        """
+        
         if ctx.message.author.id != 389616181331361803:
             # print('not valid user')
             return
@@ -35,5 +43,5 @@ class SunTzu(commands.Cog):
         self.lines = self.file.readlines()
         # self.lines.remove('\n')
         self.num_lines = len(self.lines)
-        # print('reloaded sun tzu')
+        print('reloaded sun tzu')
         return
