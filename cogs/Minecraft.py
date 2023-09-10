@@ -32,10 +32,14 @@ class Minecraft(commands.Cog):
 
 
     @commands.command(aliases=["mc"])
-    async def minecraft(self, ctx, *args):
+    async def minecraft(self, ctx):
+        """
+        Returns information about the Denny's Minecraft Server
+        """
+
         # check if in relevant server
         whitelist = {902602831675138108:"AGD", 960413256814592010:"Denny's"}
-        print(ctx.message.guild.id)
+        # print(ctx.message.guild.id)
         if ctx.message.guild.id not in whitelist.keys():
             print("Not whitelisted server")
             return
@@ -60,14 +64,22 @@ class Minecraft(commands.Cog):
 
 
     @commands.command(aliases=["rcon"])
-    async def rconsay(self, ctx, *, args=None):
+    async def rconsay(self, ctx, *, message):
+        """
+        Sends a message to the Minecraft server chat
+
+        Arguments:
+            message: The message you want to send to server chat
+        """
+
         try:
             self.server.ping()
         except:
             ctx.send("Unable to reach server")
             return
         
-        msg = f'{"".join(args)}'
+        # msg = f'{"".join(args)}'
+        msg = message
         command = f'mcrcon -H {self.ip} -P {self.port} -p {self.rconPass} "say <Discord: {ctx.message.author.name}> {msg}"'
         os.system(command)
 
