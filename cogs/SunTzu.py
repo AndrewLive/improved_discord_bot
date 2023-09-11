@@ -13,7 +13,7 @@ class SunTzu(commands.Cog):
     @commands.command(aliases=['st'])
     async def suntzu(self, ctx):
         """
-        Gives a 100% real quote from ancient Chinese general Sun Tzu
+        Gives a 100% real totally not made up quote from ancient Chinese general Sun Tzu
         """
 
         line = random.choice(self.lines)
@@ -35,7 +35,7 @@ class SunTzu(commands.Cog):
         """
         Reloads the list of quotes that Sun Tzu can give (only usable by bot owner)
         """
-        
+
         if ctx.message.author.id != 389616181331361803:
             # print('not valid user')
             return
