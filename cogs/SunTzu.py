@@ -1,6 +1,8 @@
 import os, discord
 from discord.ext import commands
 import random
+from gtts import gTTS
+
 
 class SunTzu(commands.Cog):
     def __init__(self, bot):
@@ -11,9 +13,12 @@ class SunTzu(commands.Cog):
         self.num_lines = len(self.lines)
 
     @commands.command(aliases=['st'])
-    async def suntzu(self, ctx):
+    async def suntzu(self, ctx, channel = 'text'):
         """
         Gives a 100% real totally not made up quote from ancient Chinese general Sun Tzu
+
+        Arguments:
+            channel: Whether you want the message to be sent through text or voice (user must be connected to voice channel)
         """
 
         line = random.choice(self.lines)
@@ -28,6 +33,15 @@ class SunTzu(commands.Cog):
 
 
         await ctx.send(embed=embed)
+
+        # create audio file for sun tzu quote
+        if channel != 'voice' and channel != 'vc':
+            return
+        
+        audio = gTTS(text = line, lang = 'en', slow = False, tld = "us")
+        audio.save("sun_tzu.mp3")
+        os.system("mpg321 sun_tzu.mp3")
+        return
 
 
     @commands.command(aliases=['reloadst', 'rst'])
