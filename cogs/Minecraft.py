@@ -93,12 +93,12 @@ class Minecraft(commands.Cog):
     # TO DO: add ability to communicate from minecraft to discord
     # Read output logs of mc server to do this
     # Or try PyMChat
-    @tasks.loop(seconds=0.5)
+    @tasks.loop(seconds=1)
     async def minecraftChat(self):
-        try:
-            self.server.ping()
-        except:
-            return
+        # try:
+            # self.server.ping()
+        # except:
+            # return
         
         currentLogTime = os.path.getmtime(self.logPath)
         if currentLogTime <= self.logTime:
