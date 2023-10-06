@@ -21,7 +21,7 @@ class Translate(commands.Cog):
         Arguments:
             srclang: Language of the original message. Auto detects language if none given
             destlang: Intended destination language. Defaults to English
-            message: The message you want to translate. If none specified, will translate the replied-to message
+            message: The message you want to translate. If none specified, will translate the replied-to message. MUST SPECIFY SRCLANG AND DESTLANG IF USING THIS
         """
 
         # print('Translate Command!')
