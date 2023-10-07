@@ -61,12 +61,13 @@ class SunTzu(commands.Cog):
         voice_client = await channel.connect()
 
         source = discord.FFmpegPCMAudio(output_path)
-        voice_client.play(source, after = lambda e: print('DONE'))
+        if not voice_client.is_playing():
+            voice_client.play(source, after = lambda e: print('DONE'))
 
-        while voice_client.is_playing():
-            await sleep(0.1)
+            while voice_client.is_playing():
+                await sleep(0.1)
 
-        await voice_client.disconnect()
+            await voice_client.disconnect()
 
         os.system(f'rm {output_path} {tts_path}')
 
@@ -113,7 +114,7 @@ class SunTzu(commands.Cog):
         os.system(f'ffmpeg -v quiet -stats -i "{music_path}" -ss {music_start} -to {music_end} -y sun_tzu_audio/music_trim.mp3')
 
         os.system(f'ffmpeg -v quiet -stats -i {tts_path} -i "sun_tzu_audio/music_trim.mp3" -filter_complex amix=inputs=2:duration=first:dropout_transition=3:weights="1 0.6" -y {output_path}')
-        os.system(f'rm "music_trim.mp3"')
+        os.system(f'rm "sun_tzu_audio/music_trim.mp3"')
         # os.system("mpg321 output.mp3")
 
 
