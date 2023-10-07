@@ -11,6 +11,7 @@ from CustomHelpCommand import CustomHelpCommand
 from cogs.Translate import Translate
 from cogs.Minecraft import Minecraft
 from cogs.SunTzu import SunTzu
+from cogs.Misc import Misc
 
 
 load_dotenv()
@@ -36,6 +37,8 @@ async def on_ready():
     # print('Minecraft Cog added successfully!')
     await bot.add_cog(SunTzu(bot))
     print('Sun Tzu Cog added successfully!')
+    await bot.add_cog(Misc(bot))
+    print('Misc Cog added successfully')
 
     print('Logged in as {0}!'.format(bot.user))
 
