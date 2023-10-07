@@ -133,3 +133,18 @@ class SunTzu(commands.Cog):
         self.num_lines = len(self.lines)
         print('reloaded sun tzu')
         return
+    
+    @commands.command(aliases=['stinput'])
+    async def suntzuinput(self, ctx, *, arg):
+        """
+        Submits a quote for consideration by Sun Tzu
+        
+        Arguments:
+            args: The quote to be submitted. Must be on a single line
+        """
+
+        file = open("sun_tzu_input.txt", "a")
+        file.write(''.join(arg))
+        print (''.join(arg))
+        file.write('\n')
+        file.close
