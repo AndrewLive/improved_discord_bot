@@ -24,6 +24,7 @@ class SunTzu(commands.Cog):
         """
 
         line = random.choice(self.lines)
+
         sun_tzu_image = 'https://almabooks.com/wp-content/uploads/2019/08/Sun-Tzu.jpg'
 
         embed = discord.Embed(color=0xede4b2)
@@ -45,24 +46,61 @@ class SunTzu(commands.Cog):
             return
         
         tts = gTTS(text = 'Sun Tzu in The Art of War once said: ' + line, lang = 'en', slow = False)
-        tts.save("sun_tzu.mp3")
+        tts_path = 'sun_tzu_audio/sun_tzu.mp3'
+        tts.save(tts_path)
         # os.system("mpg321 sun_tzu.mp3")
 
-        special_audio = ["Yankee Doodle (Fife and Drum).mp3", "Yankee Doodle (Fife and Drum) trim.mp3"]
+        # choose music accounting for special cases
+        music_path = self.choose_music(line)
 
-        # combine audio with music
+        output_path = 'sun_tzu_audio/output.mp3'
+        self.combine_audio(tts_path, music_path, output_path)
+
+        # enter voice channel and play audio
+        channel = ctx.message.author.voice.channel
+        voice_client = await channel.connect()
+
+        source = discord.FFmpegPCMAudio(output_path)
+        voice_client.play(source, after = lambda e: print('DONE'))
+
+        while voice_client.is_playing():
+            await sleep(0.1)
+
+        await voice_client.disconnect()
+
+        os.system(f'rm {output_path} {tts_path}')
+
+        return
+    
+    def choose_music(self, text):
+        special_audio = ["Yankee Doodle (Fife and Drum).mp3", "Yankee Doodle (Fife and Drum) trim.mp3"]
+        
+        # assign special audio
+        if text.startswith('I own a musket for home defense, since that\'s what the founding fathers intended.'):
+            return './audio/Yankee Doodle (Fife and Drum).mp3'
+
+        # choose music at random
         available_music = os.listdir('./audio')
         for i in special_audio:
             available_music.remove(i)
-        music = './audio/' + random.choice(available_music)
+        music_path = './audio/' + random.choice(available_music)
         # print(f'Using music: {music}')
 
+        return music_path
+    
+
+    def combine_audio(self, tts_path, music_path, output_path):
+        if music_path == './audio/Yankee Doodle (Fife and Drum).mp3':
+            os.system(f'ffmpeg -v quiet -stats -i {tts_path} -i "{music_path}" -filter_complex amix=inputs=2:duration=first:dropout_transition=3:weights="1 0.8" -y {output_path}')
+            return
+
+
         # add random offset to music
-        proc = subprocess.Popen('ffprobe -v quiet -stats -i sun_tzu.mp3 -show_entries format=duration -v quiet -of csv="p=0"', shell = True, stdout = subprocess.PIPE, )
+        proc = subprocess.Popen(f'ffprobe -v quiet -stats -i {tts_path} -show_entries format=duration -v quiet -of csv="p=0"', shell = True, stdout = subprocess.PIPE, )
         text_duration = proc.communicate()[0].decode('utf-8')
         proc.kill()
         # print(float(text_duration))
-        proc = subprocess.Popen(f'ffprobe -v quiet -stats -i "{music}" -show_entries format=duration -v quiet -of csv="p=0"', shell = True, stdout = subprocess.PIPE, )
+        proc = subprocess.Popen(f'ffprobe -v quiet -stats -i "{music_path}" -show_entries format=duration -v quiet -of csv="p=0"', shell = True, stdout = subprocess.PIPE, )
         music_duration = proc.communicate()[0].decode('utf-8')
         proc.kill()
         # print(float(music_duration))
@@ -72,27 +110,11 @@ class SunTzu(commands.Cog):
         music_end = music_start + float(text_duration)
         # print(music_start, music_end)
 
-        os.system(f'ffmpeg -v quiet -stats -i "{music}" -ss {music_start} -to {music_end} -y music_trim.mp3')
+        os.system(f'ffmpeg -v quiet -stats -i "{music_path}" -ss {music_start} -to {music_end} -y sun_tzu_audio/music_trim.mp3')
 
-        os.system(f'ffmpeg -v quiet -stats -i sun_tzu.mp3 -i "music_trim.mp3" -filter_complex amix=inputs=2:duration=first:dropout_transition=3:weights="1 0.8" -y output.mp3')
+        os.system(f'ffmpeg -v quiet -stats -i {tts_path} -i "sun_tzu_audio/music_trim.mp3" -filter_complex amix=inputs=2:duration=first:dropout_transition=3:weights="1 0.6" -y {output_path}')
+        os.system(f'rm "music_trim.mp3"')
         # os.system("mpg321 output.mp3")
-
-
-        # enter voice channel and play audio
-        channel = ctx.message.author.voice.channel
-        voice_client = await channel.connect()
-
-        source = discord.FFmpegPCMAudio('output.mp3')
-        voice_client.play(source, after = lambda e: print('DONE'))
-
-        while voice_client.is_playing():
-            await sleep(0.1)
-
-        await voice_client.disconnect()
-
-        os.system('rm music_trim.mp3 output.mp3 sun_tzu.mp3')
-
-        return
 
 
     @commands.command(aliases=['reloadst', 'rst'])
