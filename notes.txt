@@ -1,0 +1,2 @@
+Bot crashes if kicked from vc while sun tzu quote
+Audio compression
