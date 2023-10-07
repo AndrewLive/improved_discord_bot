@@ -8,7 +8,7 @@ from asyncio import sleep
 class SunTzu(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.assets = './sun_tzu_assets'
+        self.assets = './assets/sun_tzu'
         self.file = open(f'{self.assets}/sun_tzu.txt', 'r')
         self.lines = self.file.readlines()
         # self.lines.remove('\n')
