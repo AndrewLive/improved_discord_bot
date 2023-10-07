@@ -8,7 +8,8 @@ from asyncio import sleep
 class SunTzu(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.file = open('sun_tzu.txt', 'r')
+        self.assets = './sun_tzu_assets'
+        self.file = open(f'{self.assets}/sun_tzu.txt', 'r')
         self.lines = self.file.readlines()
         # self.lines.remove('\n')
         self.num_lines = len(self.lines)
@@ -46,14 +47,14 @@ class SunTzu(commands.Cog):
             return
         
         tts = gTTS(text = 'Sun Tzu in The Art of War once said: ' + line, lang = 'en', slow = False)
-        tts_path = 'sun_tzu_audio/sun_tzu.mp3'
+        tts_path = f'{self.assets}/sun_tzu_audio/sun_tzu.mp3'
         tts.save(tts_path)
-        # os.system("mpg321 sun_tzu.mp3")
+        # os.system("mpg321 {self.assets}/sun_tzu_audio/sun_tzu.mp3")
 
         # choose music accounting for special cases
         music_path = self.choose_music(line)
 
-        output_path = 'sun_tzu_audio/output.mp3'
+        output_path = f'{self.assets}/sun_tzu_audio/output.mp3'
         self.combine_audio(tts_path, music_path, output_path)
 
         # enter voice channel and play audio
@@ -78,20 +79,20 @@ class SunTzu(commands.Cog):
         
         # assign special audio
         if text.startswith('I own a musket for home defense, since that\'s what the founding fathers intended.'):
-            return './audio/Yankee Doodle (Fife and Drum).mp3'
+            return f'{self.assets}/audio/Yankee Doodle (Fife and Drum).mp3'
 
         # choose music at random
-        available_music = os.listdir('./audio')
+        available_music = os.listdir(f'{self.assets}/audio')
         for i in special_audio:
             available_music.remove(i)
-        music_path = './audio/' + random.choice(available_music)
+        music_path = f'{self.assets}/audio/' + random.choice(available_music)
         # print(f'Using music: {music}')
 
         return music_path
     
 
     def combine_audio(self, tts_path, music_path, output_path):
-        if music_path == './audio/Yankee Doodle (Fife and Drum).mp3':
+        if music_path == f'{self.assets}/audio/Yankee Doodle (Fife and Drum).mp3':
             os.system(f'ffmpeg -v quiet -stats -i {tts_path} -i "{music_path}" -filter_complex amix=inputs=2:duration=first:dropout_transition=3:weights="1 0.8" -y {output_path}')
             return
 
@@ -111,10 +112,10 @@ class SunTzu(commands.Cog):
         music_end = music_start + float(text_duration)
         # print(music_start, music_end)
 
-        os.system(f'ffmpeg -v quiet -stats -i "{music_path}" -ss {music_start} -to {music_end} -y sun_tzu_audio/music_trim.mp3')
+        os.system(f'ffmpeg -v quiet -stats -i "{music_path}" -ss {music_start} -to {music_end} -y {self.assets}/sun_tzu_audio/music_trim.mp3')
 
-        os.system(f'ffmpeg -v quiet -stats -i {tts_path} -i "sun_tzu_audio/music_trim.mp3" -filter_complex amix=inputs=2:duration=first:dropout_transition=3:weights="1 0.6" -y {output_path}')
-        os.system(f'rm "sun_tzu_audio/music_trim.mp3"')
+        os.system(f'ffmpeg -v quiet -stats -i {tts_path} -i "{self.assets}/sun_tzu_audio/music_trim.mp3" -filter_complex amix=inputs=2:duration=first:dropout_transition=3:weights="1 0.6" -y {output_path}')
+        os.system(f'rm "{self.assets}/sun_tzu_audio/music_trim.mp3"')
         # os.system("mpg321 output.mp3")
 
 
@@ -127,7 +128,7 @@ class SunTzu(commands.Cog):
         if ctx.message.author.id != 389616181331361803:
             # print('not valid user')
             return
-        self.file = open('sun_tzu.txt', 'r')
+        self.file = open(f'{self.assets}/sun_tzu.txt', 'r')
         self.lines = self.file.readlines()
         # self.lines.remove('\n')
         self.num_lines = len(self.lines)
@@ -143,7 +144,7 @@ class SunTzu(commands.Cog):
             args: The quote to be submitted. Must be on a single line
         """
 
-        file = open("sun_tzu_input.txt", "a")
+        file = open(f'{self.assets}/sun_tzu_input.txt', 'a')
         file.write(''.join(arg))
         print (''.join(arg))
         file.write('\n')
