@@ -7,7 +7,7 @@ class Misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(aliases=['SHITYOURSELF'])
+    @commands.command(aliases=['SHITYOURSELF', 'shit', 'SHIT'])
     async def shityourself(self, ctx):
         """
         Shit yourself
@@ -22,7 +22,7 @@ class Misc(commands.Cog):
         channel = ctx.message.author.voice.channel
         voice_client = await channel.connect()
 
-        source = discord.FFmpegPCMAudio('assets/misc/shit.mp3')
+        source = discord.FFmpegPCMAudio('./assets/misc/shit.mp3')
         if not voice_client.is_playing():
             voice_client.play(source, after = lambda e: print('DONE'))
 
