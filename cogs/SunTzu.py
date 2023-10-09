@@ -35,7 +35,6 @@ class SunTzu(commands.Cog):
         embed.set_footer(text='The Art of War - Sun Tzu')
         embed.add_field(name='', value=line)
 
-
         await ctx.send(embed=embed)
 
 
@@ -47,14 +46,13 @@ class SunTzu(commands.Cog):
             return
         
         tts = gTTS(text = 'Sun Tzu in The Art of War once said: ' + line, lang = 'en', slow = False)
-        tts_path = f'{self.assets}/sun_tzu_audio/sun_tzu.mp3'
+        tts_path = f'{self.assets}/tmp/sun_tzu.mp3'
         tts.save(tts_path)
-        # os.system("mpg321 {self.assets}/sun_tzu_audio/sun_tzu.mp3")
+        # os.system("mpg321 {self.assets}/tmp/sun_tzu.mp3")
 
         # choose music accounting for special cases
         music_path = self.choose_music(line)
-
-        output_path = f'{self.assets}/sun_tzu_audio/output.mp3'
+        output_path = f'{self.assets}/tmp/output.mp3'
         self.combine_audio(tts_path, music_path, output_path)
 
         # enter voice channel and play audio
@@ -112,10 +110,10 @@ class SunTzu(commands.Cog):
         music_end = music_start + float(text_duration)
         # print(music_start, music_end)
 
-        os.system(f'ffmpeg -v quiet -stats -i "{music_path}" -ss {music_start} -to {music_end} -y {self.assets}/sun_tzu_audio/music_trim.mp3')
+        os.system(f'ffmpeg -v quiet -stats -i "{music_path}" -ss {music_start} -to {music_end} -y {self.assets}/tmp/music_trim.mp3')
 
-        os.system(f'ffmpeg -v quiet -stats -i {tts_path} -i "{self.assets}/sun_tzu_audio/music_trim.mp3" -filter_complex amix=inputs=2:duration=first:dropout_transition=3:weights="1 0.6" -y {output_path}')
-        os.system(f'rm "{self.assets}/sun_tzu_audio/music_trim.mp3"')
+        os.system(f'ffmpeg -v quiet -stats -i {tts_path} -i "{self.assets}/tmp/music_trim.mp3" -filter_complex amix=inputs=2:duration=first:dropout_transition=3:weights="1 0.6" -y {output_path}')
+        os.system(f'rm "{self.assets}/tmp/music_trim.mp3"')
         # os.system("mpg321 output.mp3")
 
 
