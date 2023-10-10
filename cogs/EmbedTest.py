@@ -14,5 +14,6 @@ class EmbedTest(commands.Cog):
         embed.set_author(name='LeaBot')
         embed.set_footer(text='The Art of War - Sun Tzu')
         embed.add_field(name='', value='This is a test embed')
+        embed.add_field(name='', value='Last emote was: NONE')
 
         await ctx.send(embed=embed)
