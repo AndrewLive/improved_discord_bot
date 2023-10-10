@@ -13,6 +13,8 @@ from cogs.Minecraft import Minecraft
 from cogs.SunTzu import SunTzu
 from cogs.Misc import Misc
 
+from cogs.EmbedTest import EmbedTest
+
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
@@ -22,6 +24,7 @@ INTENTS.members = True
 INTENTS.typing = False
 INTENTS.presences = False
 INTENTS.message_content = True
+INTENTS.reactions = True
 
 PREFIX = "l."
 
@@ -39,6 +42,9 @@ async def on_ready():
     print('Sun Tzu Cog added successfully!')
     await bot.add_cog(Misc(bot))
     print('Misc Cog added successfully')
+
+    await bot.add_cog(EmbedTest(bot))
+    print('EmbedTest Cog added successfully')
 
     print('Logged in as {0}!'.format(bot.user))
 
