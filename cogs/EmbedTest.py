@@ -28,6 +28,7 @@ class EmbedTest(commands.Cog):
         print(f'Current embed ids: {self.embed_ids}')
 
 
+    # change to not raw bc will never use an uncached embed
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, event):
         debug_channel = self.bot.get_channel('970507801539543101')
