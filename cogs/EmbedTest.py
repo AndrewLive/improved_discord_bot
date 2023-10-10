@@ -19,8 +19,8 @@ class EmbedTest(commands.Cog):
 
         embed.set_author(name='LeaBot')
         embed.set_footer(text='The Art of War - Sun Tzu')
-        embed.add_field(name='', value='This is a test embed')
-        embed.add_field(name='', value='Last emote was: NONE')
+        embed.add_field(name='Test', value='This is a test embed')
+        embed.add_field(name='Emote', value='Last emote was: NONE')
 
         message = await ctx.send(embed=embed)
         id = message.id
@@ -38,8 +38,25 @@ class EmbedTest(commands.Cog):
         if (event.message_id, event.channel_id) in self.embed_ids:
             print(f'Reacting to a valid embed!')
 
+            channel = self.bot.get_channel(event.channel_id)
+            message = await channel.fetch_message(event.message_id)
 
-    @tasks.loop(seconds=10)
+            embed_dict = message.embeds[0].to_dict()
+            embed_dict['fields'][1]['value'] = f'Last emote was: {event.emoji}'
+            new_embed = discord.Embed.from_dict(embed_dict)
+
+            print(message.embeds)
+            print(embed_dict)
+
+
+            await message.edit(embed = new_embed)
+
+        return
+
+
+
+
+    @tasks.loop(minutes=15)
     async def age_check(self):
         print('Checking ages of embeds')
         to_remove = set()
@@ -49,7 +66,8 @@ class EmbedTest(commands.Cog):
             channel = self.bot.get_channel(channel_id)
             embed = await channel.fetch_message(embed_id)
 
-            if datetime.now(tz=embed.created_at.tzinfo) - embed.created_at > timedelta(seconds=30):
+            # get datetime info to determine age
+            if datetime.now(tz=embed.created_at.tzinfo) - embed.created_at > timedelta(minutes=15):
                 print(f'Removing embed tuple: {tuple}')
                 to_remove.add(tuple)
                 
