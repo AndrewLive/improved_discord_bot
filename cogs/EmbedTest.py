@@ -27,32 +27,26 @@ class EmbedTest(commands.Cog):
         self.embed_ids.add((id, message.channel.id))
         print(f'Current embed ids: {self.embed_ids}')
 
-
-    # change to not raw bc will never use an uncached embed
+    
     @commands.Cog.listener()
-    async def on_raw_reaction_add(self, event):
-        debug_channel = self.bot.get_channel('970507801539543101')
+    async def on_reaction_add(self, reaction, user):
+        print(f'New reaction: {reaction.emoji}')
+        print(f'User: {user.name}')
 
-        print(f'New reaction: {event.emoji}')
-        print(f'User: {event.member.name}')
+        message = reaction.message
+        channel = message.channel
 
-        if (event.message_id, event.channel_id) in self.embed_ids:
+        if (message.id, channel.id) in self.embed_ids:
             print(f'Reacting to a valid embed!')
 
-            channel = self.bot.get_channel(event.channel_id)
-            message = await channel.fetch_message(event.message_id)
-
             embed_dict = message.embeds[0].to_dict()
-            embed_dict['fields'][1]['value'] = f'Last emote was: {event.emoji}'
+            embed_dict['fields'][1]['value'] = f'Last emote was: {reaction.emoji}'
             new_embed = discord.Embed.from_dict(embed_dict)
-
-            print(message.embeds)
-            print(embed_dict)
-
 
             await message.edit(embed = new_embed)
 
         return
+        
 
 
 
