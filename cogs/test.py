@@ -1,4 +1,4 @@
-from CardGame import Card, StandardCard, BlackJackHand, GameState
+from CardGame import Card, StandardCard, BlackJackHand, GameState, Deck
 import random
 
 if __name__ == '__main__':
@@ -38,3 +38,9 @@ if __name__ == '__main__':
     print(test_hand)
     print(test_hand.pop_card('Ace'))
     print(test_hand)
+
+
+    test_deck = Deck()
+    print(test_deck)
+    test_deck.shuffle()
+    print(test_deck)
