@@ -31,6 +31,10 @@ class BlackJackHand():
         self.value = 0
         self.rank_values = {"2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "Jack":10, "Queen":10, "King":10, "Ace":11}
     
+    @property
+    def size(self):
+        return len(self.hand)
+
     def calculate_value(self):
         aces = 0
         self.value = 0
@@ -73,7 +77,49 @@ class BlackJackHand():
         for card in self.hand:
             s += f'({card}) '
         return s
+    
 
+
+class Deck():
+    def __init__(self, decks:int):
+        self.deck = []
+        self.ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"]
+        self.suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
+        self.decks = decks
+
+        for _ in range(decks):
+            for rank in self.ranks:
+                for suit in self.suits:
+                    card = StandardCard(rank, suit)
+                    self.deck.append(card)
+    
+    @property
+    def size(self):
+        return len(self.deck)
+        
+
+    def shuffle(self):
+        random.shuffle(self.deck)
+        return
+    
+    def draw(self)->StandardCard:
+        card = self.deck.pop()
+        return card
+    
+    def bury_card(self, card:StandardCard):
+        self.deck.insert(0, card)
+        return
+    
+    def return_card(self, card:StandardCard):
+        self.deck.append(card)
+        return
+    
+    def __str__(self):
+        s = ''
+        s += f'{self.size} cards: '
+        for card in self.deck:
+            s += f'({card}) '
+        return s
 
 
 
