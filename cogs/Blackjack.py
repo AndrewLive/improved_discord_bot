@@ -22,8 +22,19 @@ class Blackjack(commands.Cog):
         self.age_check.cancel()
         return
 
+
+    @commands.Cog.listener()
+    async def on_reaction_add(self, reaction, user):
+        self.processReaction(reaction, user)
+        return
     
-    def processGame(self, game:MessagableGameState, emoji, message_id):
+    @commands.Cog.listener()
+    async def on_reaction_remove(self, reaction, user):
+        self.processReaction(reaction, user)
+        return
+
+
+    def processReaction(self, reaction, user):
         return
 
 
