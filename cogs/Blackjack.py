@@ -2,7 +2,7 @@ import os, discord
 from discord.ext import commands, tasks
 import random
 from datetime import datetime, timedelta
-from CardGame import GameState
+from modules.CardGame import GameState
 
 
 # subclass of GameState that has channel_id
@@ -12,6 +12,9 @@ class MessagableGameState(GameState):
         self.player_id = player_id
         self.channel_id = channel_id
         return
+    
+
+
 
 
 class Blackjack(commands.Cog):
@@ -28,7 +31,7 @@ class Blackjack(commands.Cog):
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
-        self.processReaction(reaction, user)
+        await self.processReaction(reaction, user)
         return
     
     @commands.Cog.listener()
@@ -52,15 +55,28 @@ class Blackjack(commands.Cog):
         new_game = MessagableGameState(player_id, channel_id)
 
         # send start game embed
-
-
+        embed = self.init_embed(ctx.author.name)
+        message = await ctx.send(embed=embed)
 
         # store game state in dict for later retrieval
+        self.games[message.id] = new_game
 
-
-
+        # send reaction controls
+        await message.add_reaction('🖐️')
+        await message.add_reaction('🛑')
         
         return
+    
+
+    def init_embed(self, username) -> discord.Embed:
+        embed = discord.Embed(color=0xede4b2)
+
+        embed.set_author(name='Blackjack')
+        embed.set_footer(text='The Art of War - Sun Tzu')
+        embed.add_field(name='Game', value=f'Welcome {username}')
+        embed.add_field(name='Emote', value='Please react with EMOJI to start the game')
+
+        return embed
 
 
     
