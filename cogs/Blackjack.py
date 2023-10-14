@@ -30,11 +30,11 @@ class Blackjack(commands.Cog):
     
     @commands.Cog.listener()
     async def on_reaction_remove(self, reaction, user):
-        self.processReaction(reaction, user)
+        await self.processReaction(reaction, user)
         return
 
 
-    def processReaction(self, reaction, user):
+    async def processReaction(self, reaction, user):
         if reaction.message.author.bot:
             return
         
