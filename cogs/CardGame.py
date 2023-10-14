@@ -134,9 +134,7 @@ class Deck():
 
 # BlackJack
 class GameState():
-    def __init__(self, player):
-        self.player = player
-
+    def __init__(self):
         self.player_hand = BlackJackHand()
         self.dealer_hand = BlackJackHand()
         self.deck = Deck()
@@ -253,7 +251,6 @@ class GameState():
 
     def __str__(self):
         s = ''
-        s += f'Player: {self.player}\n'
 
         s += f'Player Hand: {self.player_hand}\n'
         s += f'Dealer Hand: {self.dealer_hand}\n'

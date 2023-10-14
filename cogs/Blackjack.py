@@ -4,9 +4,12 @@ import random
 from datetime import datetime, timedelta
 from CardGame import GameState
 
+
+# subclass of GameState that has channel_id
 class MessagableGameState(GameState):
-    def __init__(self, channel_id):
+    def __init__(self, player_id, channel_id):
         super().__init__()
+        self.player_id = player_id
         self.channel_id = channel_id
         return
 
@@ -40,10 +43,24 @@ class Blackjack(commands.Cog):
         
         
         return
+    
+
+    @commands.command()
+    async def blackjack(self, ctx):
+        player_id = ctx.author.id
+        channel_id = ctx.channel.id
+        new_game = MessagableGameState(player_id, channel_id)
+
+        # send start game embed
 
 
 
+        # store game state in dict for later retrieval
 
+
+
+        
+        return
 
 
     
