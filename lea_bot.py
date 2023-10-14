@@ -9,9 +9,10 @@ import logging
 from CustomHelpCommand import CustomHelpCommand
 
 from cogs.Translate import Translate
-from cogs.Minecraft import Minecraft
+# from cogs.Minecraft import Minecraft
 from cogs.SunTzu import SunTzu
 from cogs.Misc import Misc
+from cogs.Blackjack import Blackjack
 
 from cogs.EmbedTest import EmbedTest
 
@@ -42,6 +43,8 @@ async def on_ready():
     print('Sun Tzu Cog added successfully!')
     await bot.add_cog(Misc(bot))
     print('Misc Cog added successfully')
+    await bot.add_cog(Blackjack(bot))
+    print('Blackjack Cog added successfully')
 
     # await bot.add_cog(EmbedTest(bot))
     # print('EmbedTest Cog added successfully')
