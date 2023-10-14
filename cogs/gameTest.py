@@ -1,4 +1,4 @@
-from CardGame import GameState
+from modules.CardGame import GameState
 
 if __name__ == '__main__':
     game = GameState(player = 'player')

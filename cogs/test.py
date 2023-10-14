@@ -1,4 +1,4 @@
-from CardGame import Card, StandardCard, BlackJackHand, GameState, Deck
+from modules.CardGame import Card, StandardCard, BlackJackHand, GameState, Deck
 import random
 
 if __name__ == '__main__':
