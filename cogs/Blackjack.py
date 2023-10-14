@@ -41,9 +41,36 @@ class Blackjack(commands.Cog):
 
 
     async def processReaction(self, reaction, user):
-        if reaction.message.author.bot:
+        # print("Processing Reaction")
+        if user.bot:
+            return
+        game = self.games[reaction.message.id]
+
+        # print(game)
+
+        if user.id != game.player_id:
             return
         
+        # check game state and process reaction
+        if game.game_stage == 'init':
+            # print(reaction.emoji)
+            if reaction.emoji == '🖐️':
+                # print('VALID REACTION')
+                game.start_game()
+
+                new_embed = self.game_embed(game)
+                await reaction.message.edit(embed = new_embed)
+
+            return
+        
+        if game.game_stage == 'player_turn':
+
+            return
+        
+        if game.game_stage == 'evaluation':
+
+            return
+
         
         return
     
@@ -72,15 +99,24 @@ class Blackjack(commands.Cog):
         embed = discord.Embed(color=0xede4b2)
 
         embed.set_author(name='Blackjack')
-        embed.set_footer(text='The Art of War - Sun Tzu')
+        embed.set_footer(text='🖐️ to start the game')
         embed.add_field(name='Game', value=f'Welcome {username}')
-        embed.add_field(name='Emote', value='Please react with EMOJI to start the game')
+
+        return embed
+    
+    def game_embed(self, game:MessagableGameState):
+        embed = discord.Embed(color=0xede4b2)
+
+        embed.set_author(name='Blackjack')
+        embed.set_footer(text='🖐️ = hit, 🛑 = stand')
+        embed.add_field(name='Dealer Hand', value=f'{game.dealer_hand.hand[0]}, Unknown card')
+        embed.add_field(name='Player Hand', value=f'{game.player_hand}')
 
         return embed
 
 
     
-    @tasks.loop(minutes=15)
+    @tasks.loop(minutes=5)
     async def age_check(self):
         print('Checking ages of embeds')
         to_remove = set()
