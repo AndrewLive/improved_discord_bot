@@ -35,6 +35,10 @@ class Blackjack(commands.Cog):
 
 
     def processReaction(self, reaction, user):
+        if reaction.message.author.bot:
+            return
+        
+        
         return
 
 
