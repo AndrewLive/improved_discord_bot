@@ -28,28 +28,31 @@ class UnoCard(Card):
 class BlackJackHand():
     def __init__(self):
         self.hand = []
-        self.value = 0
         self.rank_values = {"2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "Jack":10, "Queen":10, "King":10, "Ace":11}
     
     @property
     def size(self):
         return len(self.hand)
+    
+    @property
+    def value(self):
+        return self.calculate_value()
 
     def calculate_value(self):
         aces = 0
-        self.value = 0
+        value = 0
         for card in self.hand:
             rank = card.rank
-            self.value += self.rank_values[rank]
+            value += self.rank_values[rank]
             if rank == "Ace":
                 aces += 1
         
         while aces > 0:
-            if self.value <= 21:
+            if value <= 21:
                 break
-            self.value -= 10
+            value -= 10
             aces -= 1
-        return
+        return value
     
     def append_card(self, card:StandardCard):
         self.hand.append(card)
@@ -69,6 +72,10 @@ class BlackJackHand():
             card = self.hand.pop()
         self.calculate_value()
         return card
+    
+    def clear(self):
+        self.hand.clear()
+        return
     
 
     def __str__(self):
@@ -130,88 +137,128 @@ class GameState():
     def __init__(self, player):
         self.player = player
 
-        self.player_hand = []
-        self.player_hand_value = 0
-        self.dealer_hand = []
-        self.dealer_hand_value = 0
-        self.deck = []
-        self.reset()
+        self.player_hand = BlackJackHand()
+        self.dealer_hand = BlackJackHand()
+        self.deck = Deck()
 
-        self.stand = False
-
-        return
-
-
-
-    def reset_deck(self):
-        self.deck.clear()
-        ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"]
-        suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
-        for rank in ranks:
-            for suit in suits:
-                card = StandardCard(rank, suit)
-                self.deck.append(card)
+        # keep track of game stage
+        # ['init', 'player_turn', 'dealer_turn', 'evaluation']
+        self.game_stage = 'init'
+        self.winner = None
 
         return
-    
-    def shuffle_deck(self):
-        random.shuffle(self.deck)
-    
+
+
+
     def reset(self):
-        self.player_hand.clear()
-        self.dealer_hand.clear()
-        self.player_hand_value = 0
-        self.dealer_hand_value = 0
-        self.reset_deck()
-        self.shuffle_deck()
+        # resets game to the 'init' state
+        self.player_hand = BlackJackHand()
+        self.dealer_hand = BlackJackHand()
+        self.deck = Deck()
 
-
-
-    def calculate_value(self, hand:[StandardCard]):
-        aces = 0
-        values = {"2":2, "3":3, "4":4, "5":5, "6":6, "7":7, "8":8, "9":9, "10":10, "Jack":10, "Queen":10, "King":10, "Ace":11}
-        value = 0
-
-        for card in hand:
-            rank = card.rank
-            value += values[rank]
-        
-        while aces > 0:
-            if value > 21:
-                value -= 10
-                aces -= 1
-        
-        return value
+        self.game_stage = 'init'
+        self.winner = None
+        return
     
+    def start_game(self):
+        # starts game by dealing initial hands from shuffled deck
+        # make sure player does not start with 21 bc that just wins the game and is not fun
+        while True:
+            self.reset()
+            self.deck.shuffle()
+            self.deal_initial_hands()
+
+            if self.player_hand.value != 21:
+                break
+
+        self.game_stage = 'player_turn'
+        return
+    
+
 
     def deal_initial_hands(self):
+        cards = []
+        for _ in range(4):
+            cards.append(self.deck.draw())
+        
         for _ in range(2):
-            card = self.deck.pop()
-            self.player_hand.append(card)
-            card = self.deck.pop()
-            self.dealer_hand.append(card)
+            self.player_hand.append_card(cards.pop())
+            self.dealer_hand.append_card(cards.pop())
 
+        return
+    
 
+    
+    def hit(self):
+        # player hits for a card
+        if self.game_stage != 'player_turn':
+            return
+        
+        card = self.deck.draw()
+        self.player_hand.append_card(card)
 
+        # check hand value
+        if self.player_hand.value > 21:
+            self.game_stage = 'evaluation'
+            return
 
+        return
+    
+    def stand(self):
+        # player stands
+        if self.game_stage != 'player_turn':
+            return
+        
+        self.game_stage = 'dealer_turn'
+        return
+
+    def play_dealer(self):
+        # play dealer until dealer hand >= 17
+        if self.game_stage != 'dealer_turn':
+            return
+        
+        while True:
+            if self.dealer_hand.value >= 17:
+                self.game_stage = 'evaluation'
+                break
+
+            card = self.deck.draw()
+            self.dealer_hand.append_card(card)
+
+        return
+    
+    def evaluate_game(self):
+        # evaluate winner of game at end of round
+        if self.game_stage != 'evaluation':
+            return
+        
+        # win cases
+        if self.player_hand.value > 21:
+            # player bust
+            self.winner = 'dealer'
+        elif self.dealer_hand.value > 21:
+            # dealer bust
+            self.winner = 'player'
+        elif self.player_hand.value > self.dealer_hand.value:
+            # player win
+            self.winner = 'player'
+        elif self.player_hand.value == self.dealer_hand.value:
+            # tie
+            self.winner = None
+        else:
+            # dealer win
+            self.winner = 'dealer'
+
+        return
 
     def __str__(self):
         s = ''
         s += f'Player: {self.player}\n'
 
-        s += f'Player Hand ({len(self.player_hand)} cards, value = {self.player_hand_value}): '
-        for card in self.player_hand:
-            s += f'({card}) '
-        s += '\n'
+        s += f'Player Hand: {self.player_hand}\n'
+        s += f'Dealer Hand: {self.dealer_hand}\n'
+        s += f'Deck: {self.deck}\n'
 
-
-        s += f'Dealer Hand ({len(self.dealer_hand)} cards, value = {self.dealer_hand_value}): '
-        for card in self.dealer_hand:
-            s += f'({card}) '
-        s += '\n'
-
-        s += f'Deck ({len(self.deck)}): '
-        for card in self.deck:
-            s += f'({card}) '
-        s += '\n'
+        s += f'Game Stage: {self.game_stage}\n'
+        s += f'Winner: {self.winner}\n'
         return s
