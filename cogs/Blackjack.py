@@ -64,10 +64,36 @@ class Blackjack(commands.Cog):
             return
         
         if game.game_stage == 'player_turn':
+            if reaction.emoji == '🖐️':
+                game.hit()
+                # after hit, can be either player_turn or evaluation
+                if game.game_stage == 'player_turn':
+                    new_embed = self.game_embed(game)
+                elif game.game_stage == 'evaluation':
+                    game.evaluate_game()
+                    new_embed = self.evaluation_embed(game)
+                await reaction.message.edit(embed = new_embed)
 
+            if reaction.emoji == '🛑':
+                game.stand()
+                # after stand, process dealer's turn
+                game.play_dealer()
+                game.evaluate_game()
+                new_embed = self.evaluation_embed(game)
+                await reaction.message.edit(embed = new_embed)
             return
         
         if game.game_stage == 'evaluation':
+            if reaction.emoji == '🖐️':
+                # restart game
+                game.reset()
+                new_embed = self.init_embed(user.name)
+                await reaction.message.edit(embed = new_embed)
+                
+            if reaction.emoji == '🛑':
+                # delete message and delete from dict
+                self.games.pop(reaction.message.id)
+                await reaction.message.delete()
 
             return
 
@@ -111,6 +137,17 @@ class Blackjack(commands.Cog):
         embed.set_footer(text='🖐️ = hit, 🛑 = stand')
         embed.add_field(name='Dealer Hand', value=f'{game.dealer_hand.hand[0]}, Unknown card')
         embed.add_field(name='Player Hand', value=f'{game.player_hand}')
+
+        return embed
+    
+    def evaluation_embed(self, game:MessagableGameState):
+        embed = discord.Embed(color=0xede4b2)
+
+        embed.set_author(name='Blackjack')
+        embed.set_footer(text='🖐️ = play again, 🛑 = quit game')
+        embed.add_field(name='Dealer Hand', value=f'{game.dealer_hand}')
+        embed.add_field(name='Player Hand', value=f'{game.player_hand}')
+        embed.add_field(name='Winner', value=f'{game.winner}')
 
         return embed
 
