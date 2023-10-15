@@ -11,6 +11,7 @@ class MessagableGameState(GameState):
         super().__init__()
         self.player_id = player_id
         self.channel_id = channel_id
+        self.last_interact = datetime.now()
         return
     
 
@@ -44,12 +45,18 @@ class Blackjack(commands.Cog):
         # print("Processing Reaction")
         if user.bot:
             return
+        
+        # check that game is still in play
+        if reaction.message.id not in self.games.keys():
+            return
         game = self.games[reaction.message.id]
 
         # print(game)
 
         if user.id != game.player_id:
             return
+        
+        game.last_interact = datetime.now()
         
         # check game state and process reaction
         if game.game_stage == 'init':
@@ -154,18 +161,19 @@ class Blackjack(commands.Cog):
 
 
     
-    @tasks.loop(minutes=5)
+    @tasks.loop(seconds=10)
     async def age_check(self):
         print('Checking ages of embeds')
         to_remove = set()
         for message_id in self.games.keys():
             game = self.games[message_id]
             channel_id = game.channel_id
+            last_interact = game.last_interact
             channel = self.bot.get_channel(channel_id)
-            message = await channel.fetch_message(channel_id)
+            message = await channel.fetch_message(message_id)
 
             # get datetime info to determine age
-            if datetime.now(tz=message.created_at.tzinfo) - message.created_at > timedelta(minutes=15):
+            if datetime.now(tz=last_interact.tzinfo) - last_interact > timedelta(seconds=30):
                 print(f'Removing message from consideration: {message_id}')
                 to_remove.add(message_id)
                 
