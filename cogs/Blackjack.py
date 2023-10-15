@@ -101,7 +101,7 @@ class Blackjack(commands.Cog):
         return
     
 
-    @commands.command()
+    @commands.command(aliases=['bj'])
     async def blackjack(self, ctx):
         player_id = ctx.author.id
         channel_id = ctx.channel.id
@@ -122,7 +122,7 @@ class Blackjack(commands.Cog):
     
 
     def init_embed(self, username) -> discord.Embed:
-        embed = discord.Embed(color=0xede4b2)
+        embed = discord.Embed(color=0x15800b)
 
         embed.set_author(name='Blackjack')
         embed.set_footer(text='🖐️ to start the game')
@@ -131,7 +131,7 @@ class Blackjack(commands.Cog):
         return embed
     
     def game_embed(self, game:MessagableGameState):
-        embed = discord.Embed(color=0xede4b2)
+        embed = discord.Embed(color=0x15800b)
 
         embed.set_author(name='Blackjack')
         embed.set_footer(text='🖐️ = hit, 🛑 = stand')
@@ -141,7 +141,7 @@ class Blackjack(commands.Cog):
         return embed
     
     def evaluation_embed(self, game:MessagableGameState):
-        embed = discord.Embed(color=0xede4b2)
+        embed = discord.Embed(color=0x15800b)
 
         embed.set_author(name='Blackjack')
         embed.set_footer(text='🖐️ = play again, 🛑 = quit game')
