@@ -1,3 +1,6 @@
 Think Fast Chucklenuts Flashbang
 Random sound bytes
 Sun Tzu command to input quotes
+
+Switch BlackJack to use buttons
+Use card images for BlackJacks
