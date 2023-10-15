@@ -87,7 +87,8 @@ class Blackjack(commands.Cog):
             if reaction.emoji == '🖐️':
                 # restart game
                 game.reset()
-                new_embed = self.init_embed(user.name)
+                game.start_game()
+                new_embed = self.game_embed(game)
                 await reaction.message.edit(embed = new_embed)
                 
             if reaction.emoji == '🛑':
