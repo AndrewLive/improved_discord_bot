@@ -15,9 +15,6 @@ class MessagableGameState(GameState):
         return
     
 
-
-
-
 class Blackjack(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -143,8 +140,8 @@ class Blackjack(commands.Cog):
 
         embed.set_author(name='Blackjack')
         embed.set_footer(text='🖐️ = hit, 🛑 = stand')
-        embed.add_field(name='Dealer Hand', value=f'{game.dealer_hand.hand[0]}, Unknown card')
-        embed.add_field(name='Player Hand', value=f'{game.player_hand}')
+        embed.add_field(name='Dealer Hand', value=f'{game.dealer_hand.hand[0]}, Unknown card', inline=False)
+        embed.add_field(name='Player Hand', value=f'{game.player_hand}', inline=False)
 
         return embed
     
@@ -153,15 +150,15 @@ class Blackjack(commands.Cog):
 
         embed.set_author(name='Blackjack')
         embed.set_footer(text='🖐️ = play again, 🛑 = quit game')
-        embed.add_field(name='Dealer Hand', value=f'{game.dealer_hand}')
-        embed.add_field(name='Player Hand', value=f'{game.player_hand}')
-        embed.add_field(name='Winner', value=f'{game.winner}')
+        embed.add_field(name='Dealer Hand', value=f'{game.dealer_hand}', inline=False)
+        embed.add_field(name='Player Hand', value=f'{game.player_hand}', inline=False)
+        embed.add_field(name='Winner', value=f'{game.winner}', inline=False)
 
         return embed
 
 
     
-    @tasks.loop(seconds=10)
+    @tasks.loop(minutes=5)
     async def age_check(self):
         print('Checking ages of embeds')
         to_remove = set()
@@ -173,7 +170,7 @@ class Blackjack(commands.Cog):
             message = await channel.fetch_message(message_id)
 
             # get datetime info to determine age
-            if datetime.now(tz=last_interact.tzinfo) - last_interact > timedelta(seconds=30):
+            if datetime.now(tz=last_interact.tzinfo) - last_interact > timedelta(minutes=15):
                 print(f'Removing message from consideration: {message_id}')
                 to_remove.add(message_id)
                 
