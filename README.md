@@ -29,6 +29,8 @@ The following unix applications are also required:
 
 Bot commands are invoked with the prefix `l.<command>`. The following commands are available:
 
+    Blackjack:
+        blackjack    Initiates a game of Blackjack
     Minecraft:
         minecraft    Returns information about the Denny's Minecraft Server
         rconsay      Sends a message to the Minecraft server chat
