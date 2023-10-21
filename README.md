@@ -24,7 +24,6 @@ The following unix applications are also required:
 
 - FFMPEG
 
-
 ## Command usage
 
 Bot commands are invoked with the prefix `l.<command>`. The following commands are available:
