@@ -30,15 +30,15 @@ The following unix applications are also required:
 Bot commands are invoked with the prefix `l.<command>`. The following commands are available:
 
     Minecraft:
-    minecraft    Returns information about the Denny's Minecraft Server
-    rconsay      Sends a message to the Minecraft server chat
+        minecraft    Returns information about the Denny's Minecraft Server
+        rconsay      Sends a message to the Minecraft server chat
     SunTzu:
-    reloadsuntzu Reloads the list of quotes that Sun Tzu can give (only usable by bot owner)
-    suntzu       Gives a 100% real quote from ancient Chinese general Sun Tzu
+        reloadsuntzu Reloads the list of quotes that Sun Tzu can give (only usable by bot owner)
+        suntzu       Gives a 100% real quote from ancient Chinese general Sun Tzu
     Translate:
-    translate    Translates the message the invoker replied to
+        translate    Translates the message the invoker replied to
     ​No Category:
-    help         Shows this message
+        help         Shows this message
 
     Type l.help command for more info on a command.
     You can also type l.help category for more info on a category.
