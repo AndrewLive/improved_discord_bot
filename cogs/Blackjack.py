@@ -2,7 +2,7 @@ import os, discord
 from discord.ext import commands, tasks
 import random
 from datetime import datetime, timedelta
-from modules.CardGame import GameState
+from modules.CardGame import GameState, StandardCard
 
 
 # subclass of GameState that has channel_id
@@ -12,6 +12,24 @@ class MessagableGameState(GameState):
         self.player_id = player_id
         self.channel_id = channel_id
         self.last_interact = datetime.now()
+        return
+    
+
+# Game Control Buttons
+class ControlButtons(discord.ui.View):
+    def __init__(self):
+        super().__init__()
+        self.add_item(discord.ui.Button(label="Start"))
+        self.add_item(discord.ui.Button(label="Quit"))
+
+    @discord.ui.button(label="Hit", style=discord.ButtonStyle.green)
+    async def hitBtn(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Hit", ephemeral=True)
+        return
+    
+    @discord.ui.button(label="Stand", style=discord.ButtonStyle.red)
+    async def standBtn(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Stand", ephemeral=True)
         return
     
 
@@ -63,7 +81,7 @@ class Blackjack(commands.Cog):
                 game.start_game()
 
                 new_embed = self.game_embed(game)
-                await reaction.message.edit(embed = new_embed)
+                await reaction.message.edit(embed = new_embed, view=ControlButtons())
 
             return
         
@@ -76,7 +94,7 @@ class Blackjack(commands.Cog):
                 elif game.game_stage == 'evaluation':
                     game.evaluate_game()
                     new_embed = self.evaluation_embed(game)
-                await reaction.message.edit(embed = new_embed)
+                await reaction.message.edit(embed = new_embed, view=ControlButtons())
 
             if reaction.emoji == '🛑':
                 game.stand()
@@ -84,7 +102,7 @@ class Blackjack(commands.Cog):
                 game.play_dealer()
                 game.evaluate_game()
                 new_embed = self.evaluation_embed(game)
-                await reaction.message.edit(embed = new_embed)
+                await reaction.message.edit(embed = new_embed, view=ControlButtons())
             return
         
         if game.game_stage == 'evaluation':
@@ -93,7 +111,7 @@ class Blackjack(commands.Cog):
                 game.reset()
                 game.start_game()
                 new_embed = self.game_embed(game)
-                await reaction.message.edit(embed = new_embed)
+                await reaction.message.edit(embed = new_embed, view=ControlButtons())
                 
             if reaction.emoji == '🛑':
                 # delete message and delete from dict
@@ -114,7 +132,7 @@ class Blackjack(commands.Cog):
 
         # send start game embed
         embed = self.init_embed(ctx.author.name)
-        message = await ctx.send(embed=embed)
+        message = await ctx.send(embed=embed, view=ControlButtons())
 
         # store game state in dict for later retrieval
         self.games[message.id] = new_game
@@ -140,8 +158,9 @@ class Blackjack(commands.Cog):
 
         embed.set_author(name='Blackjack')
         embed.set_footer(text='🖐️ = hit, 🛑 = stand')
-        embed.add_field(name='Dealer Hand', value=f'{game.dealer_hand.hand[0]}, Unknown card', inline=False)
-        embed.add_field(name='Player Hand', value=f'{game.player_hand}', inline=False)
+        embed.add_field(name='Dealer Hand', value=f'{self.getCardStr(game.dealer_hand.hand[0])} ??', inline=False)
+        card_strings = [self.getCardStr(card) for card in game.player_hand.hand]
+        embed.add_field(name='Player Hand', value=f'{" ".join(card_strings)}', inline=False)
 
         return embed
     
@@ -150,12 +169,28 @@ class Blackjack(commands.Cog):
 
         embed.set_author(name='Blackjack')
         embed.set_footer(text='🖐️ = play again, 🛑 = quit game')
-        embed.add_field(name='Dealer Hand', value=f'{game.dealer_hand}', inline=False)
-        embed.add_field(name='Player Hand', value=f'{game.player_hand}', inline=False)
+        card_strings = [self.getCardStr(card) for card in game.dealer_hand.hand]
+        embed.add_field(name='Dealer Hand', value=f'{" ".join(card_strings)}', inline=False)
+        card_strings = [self.getCardStr(card) for card in game.player_hand.hand]
+        embed.add_field(name='Player Hand', value=f'{" ".join(card_strings)}', inline=False)
         embed.add_field(name='Winner', value=f'{game.winner}', inline=False)
 
         return embed
+    
 
+    def getCardStr(self, card:StandardCard) -> str:
+        rank = card.rank
+        suite = card.suit
+        if (suite == 'Hearts'):
+            suite = '♥️'
+        elif (suite == "Clubs"):
+            suite = '♣️'
+        elif (suite == "Diamonds"):
+            suite = '♦️'
+        elif (suite == "Spades"):
+            suite = '♠️'
+        
+        return f'{rank}{suite}'
 
     
     @tasks.loop(minutes=5)
