@@ -46,6 +46,9 @@ class EmbedTest(commands.Cog):
             embed_dict['fields'][1]['value'] = f'Last emote was: {reaction.emoji}'
             new_embed = discord.Embed.from_dict(embed_dict)
 
+            card2 = discord.File('./assets/blackjack/PNG-cards-1.3/5_of_spades.png')
+            new_embed.set_image(url='attachment://5_of_spades.png')
+
             await message.edit(embed = new_embed)
 
         return
