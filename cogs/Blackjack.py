@@ -47,7 +47,7 @@ class ControlButtons(discord.ui.View):
     
     # Process the reaction
     async def processButton(self, interaction, button):
-        print("Processing Reaction")
+        # print("Processing Reaction")
         if interaction.user.bot:
             return
         
@@ -63,21 +63,17 @@ class ControlButtons(discord.ui.View):
         
         game.last_interact = datetime.now()
 
-        print('evaluating game state')
+        # print('evaluating game state')
         
         # check game state and process reaction
         if game.game_stage == 'init':
             # print(reaction.emoji)
             if button.custom_id == 'startBtn':
                 # print('VALID REACTION')
-                print('before before')
                 game.start_game()
 
-                print('before')
                 new_embed = self.game_embed(game)
-                print('here')
                 await interaction.message.edit(embed = new_embed, view=self)
-                print('after')
 
             return
         
@@ -213,7 +209,7 @@ class Blackjack(commands.Cog):
         
         return
     
-    
+
     # @commands.Cog.listener()
     # async def on_reaction_add(self, reaction, user):
     #     await self.processReaction(reaction, user)
