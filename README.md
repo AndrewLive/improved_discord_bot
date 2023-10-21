@@ -1,6 +1,6 @@
 # improved_discord_bot
 
-A discord bot for me and my friends.
+A discord bot for me and my friends, rewritten to be cleaner using cogs and modules.
 Functions include:
 
 - Text translation using Google Translate's API
