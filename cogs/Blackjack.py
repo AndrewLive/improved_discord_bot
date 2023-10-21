@@ -192,6 +192,9 @@ class Blackjack(commands.Cog):
 
     @commands.command(aliases=['bj'])
     async def blackjack(self, ctx):
+        """
+        Initiates a game of Blackjack
+        """
         player_id = ctx.author.id
         channel_id = ctx.channel.id
         new_game = MessagableGameState(player_id, channel_id)
