@@ -31,12 +31,12 @@ Bot commands are invoked with the prefix `l.<command>`. The following commands a
 
     Blackjack:
         blackjack    Initiates a game of Blackjack
-    Minecraft:
-        minecraft    Returns information about the Denny's Minecraft Server
-        rconsay      Sends a message to the Minecraft server chat
+    Misc:
+        shityourself Shit yourself
     SunTzu:
-        reloadsuntzu Reloads the list of quotes that Sun Tzu can give (only usable by bot owner)
-        suntzu       Gives a 100% real quote from ancient Chinese general Sun Tzu
+        reloadsuntzu Reloads the list of quotes that Sun Tzu can give (only usable by the bot owner)
+        suntzu       Gives a 100% real totally not made up quote from ancient Chinese General, Sun Tzu
+        suntzuinput  Submits a quote for consideration by Sun Tzu
     Translate:
         translate    Translates the message the invoker replied to
     ​No Category:
