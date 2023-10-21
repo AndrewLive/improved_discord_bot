@@ -66,6 +66,12 @@ class ControlButtons(discord.ui.View):
         # print('evaluating game state')
         
         # check game state and process reaction
+        if button.custom_id == 'quitBtn':
+            # delete message and delete from dict
+            self.games.pop(interaction.message.id)
+            await interaction.message.delete()
+            return
+        
         if game.game_stage == 'init':
             # print(reaction.emoji)
             if button.custom_id == 'startBtn':
