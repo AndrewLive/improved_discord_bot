@@ -133,6 +133,7 @@ class Deck():
     
 
 # BlackJack
+# TO DO: Add splits and betting
 class GameState():
     def __init__(self):
         self.player_hand = BlackJackHand()
