@@ -56,9 +56,10 @@ async def on_ready():
 
 
 @bot.event
-async def on_message(message):
+async def on_message(message:discord.Message):
     # DEBUG REMOVE LATER
     # print(str(message.author) + ": " + message.content)
+
 
     await bot.process_commands(message)
 
