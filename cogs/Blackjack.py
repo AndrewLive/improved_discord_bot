@@ -20,34 +20,55 @@ class ControlButtons(discord.ui.View):
     def __init__(self, games):
         super().__init__()
         self.games: dict[int, MessagableGameState] = games
+        
+        #find buttons and keep track of them to disable and enable them
+        self.hitButton = None
+        self.standButton = None
+        self.startButton = None
+        self.quitButton = None
+        for child in self.children:
+            if type(child) == discord.ui.Button:
+                if child.label == 'Hit':
+                    self.hitButton = child
+                if child.label == 'Stand':
+                    self.standButton = child
+                if child.label == 'Start':
+                    self.startButton = child
+                if child.label == 'Quit':
+                    self.quitButton = child
+        
 
-    @discord.ui.button(label="Hit", style=discord.ButtonStyle.green, custom_id="hitBtn")
+    @discord.ui.button(label="Hit", style=discord.ButtonStyle.green, custom_id="hitBtn", disabled=True)
     async def hitBtn(self, interaction: discord.Interaction, button: discord.ui.Button):
+        # print('Hit Button pressed!')
         await self.processButton(interaction, button)
         await interaction.response.defer()
         return
     
-    @discord.ui.button(label="Stand", style=discord.ButtonStyle.red, custom_id="standBtn")
+    @discord.ui.button(label="Stand", style=discord.ButtonStyle.red, custom_id="standBtn", disabled=True)
     async def standBtn(self, interaction: discord.Interaction, button: discord.ui.Button):
+        # print('Stand Button pressed!')
         await self.processButton(interaction, button)
         await interaction.response.defer()
         return
     
-    @discord.ui.button(label="Start", style=discord.ButtonStyle.blurple, custom_id="startBtn")
+    @discord.ui.button(label="Start", style=discord.ButtonStyle.blurple, custom_id="startBtn", disabled=False)
     async def startBtn(self, interaction: discord.Interaction, button: discord.ui.Button):
+        # print('Start Button pressed!')
         await self.processButton(interaction, button)
         await interaction.response.defer()
         return
     
-    @discord.ui.button(label="Quit", style=discord.ButtonStyle.blurple, custom_id="quitBtn")
+    @discord.ui.button(label="Quit", style=discord.ButtonStyle.blurple, custom_id="quitBtn", disabled=False)
     async def quitBtn(self, interaction: discord.Interaction, button: discord.ui.Button):
+        # print('Quit Button pressed!')
         await self.processButton(interaction, button)
         await interaction.response.defer()
         return
     
     # Process the reaction
     async def processButton(self, interaction, button):
-        # print("Processing Reaction")
+        # print(f"Processing Reaction: {button.custom_id}")
         if interaction.user.bot:
             return
         
@@ -79,6 +100,11 @@ class ControlButtons(discord.ui.View):
                 game.start_game()
 
                 new_embed = self.game_embed(game)
+                self.hitButton.disabled = False
+                self.standButton.disabled = False
+                self.startButton.disabled = True
+
+                self.games[interaction.message.id] = game
                 await interaction.message.edit(embed = new_embed, view=self)
 
             return
@@ -92,6 +118,11 @@ class ControlButtons(discord.ui.View):
                 elif game.game_stage == 'evaluation':
                     game.evaluate_game()
                     new_embed = self.evaluation_embed(game)
+                    self.hitButton.disabled = True
+                    self.standButton.disabled = True
+                    self.startButton.disabled = False
+
+                self.games[interaction.message.id] = game
                 await interaction.message.edit(embed = new_embed, view=self)
 
             if button.custom_id == 'standBtn':
@@ -100,6 +131,11 @@ class ControlButtons(discord.ui.View):
                 game.play_dealer()
                 game.evaluate_game()
                 new_embed = self.evaluation_embed(game)
+                self.hitButton.disabled = True
+                self.standButton.disabled = True
+                self.startButton.disabled = False
+
+                self.games[interaction.message.id] = game
                 await interaction.message.edit(embed = new_embed, view=self)
             return
         
@@ -109,6 +145,11 @@ class ControlButtons(discord.ui.View):
                 game.reset()
                 game.start_game()
                 new_embed = self.game_embed(game)
+                self.hitButton.disabled = False
+                self.standButton.disabled = False
+                self.startButton.disabled = True
+
+                self.games[interaction.message.id] = game
                 await interaction.message.edit(embed = new_embed, view=self)
                 
             if button.custom_id == 'quitBtn':
@@ -201,13 +242,18 @@ class Blackjack(commands.Cog):
         """
         Initiates a game of Blackjack
         """
+        # print(f'Blackjack game initialized by {ctx.author.id}')
         player_id = ctx.author.id
         channel_id = ctx.channel.id
         new_game = MessagableGameState(player_id, channel_id)
 
         # send start game embed
+        # print(f'Sending game embed...')
         embed = self.init_embed(ctx.author.name)
-        message = await ctx.send(embed=embed, view=self.buttons)
+        # init a new Buttons obj to try to fix non-responsiveness after long time issue
+        buttons = ControlButtons(self.games)
+        message = await ctx.send(embed=embed, view=buttons)
+        # print(f'Game embed sent!')
 
         # store game state in dict for later retrieval
         self.games[message.id] = new_game
