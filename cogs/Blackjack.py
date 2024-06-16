@@ -68,7 +68,7 @@ class ControlButtons(discord.ui.View):
     
     # Process the reaction
     async def processButton(self, interaction, button):
-        # print(f"Processing Reaction: {button.custom_id}")
+        # print("Processing Reaction")
         if interaction.user.bot:
             return
         
@@ -95,7 +95,7 @@ class ControlButtons(discord.ui.View):
         
         if game.game_stage == 'init':
             # print(reaction.emoji)
-            if button.custom_id == 'startBtn':
+            if (button.custom_id == 'startBtn') or (button.custom_id == 'hitBtn'):
                 # print('VALID REACTION')
                 game.start_game()
 
@@ -140,7 +140,7 @@ class ControlButtons(discord.ui.View):
             return
         
         if game.game_stage == 'evaluation':
-            if button.custom_id == 'startBtn':
+            if (button.custom_id == 'startBtn') or (button.custom_id == 'hitBtn'):
                 # restart game
                 game.reset()
                 game.start_game()
