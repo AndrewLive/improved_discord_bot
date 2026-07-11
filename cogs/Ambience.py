@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 class Ambience(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.assets = './assets/ambience'
+        self.assets = './assets/ambience/'
         self.playing = False
         self.current_channel = None
         self.voice_client = None
@@ -34,7 +34,7 @@ class Ambience(commands.Cog):
 
             new_music = self.choose_music()
             source = discord.FFmpegPCMAudio(new_music)
-            voice_client.play(source, after = lambda e: print('DONE'))
+            self.voice_client.play(source, after = lambda e: print('DONE'))
         else:
             await self.voice_client.disconnect()
             self.voice_client = None
@@ -50,18 +50,20 @@ class Ambience(commands.Cog):
             return
 
         # if all members leave channel, make bot also leave
-        if (self.current_channel.members == []):
+        if (len(self.current_channel.members) == 1):
+            print("All members left")
             await self.voice_client.disconnect()
             self.voice_client = None
             self.playing = False
-            self.current = None
+            self.current_channel = None
             return
 
         # if current song is finished, play new song
         if (not self.voice_client.is_playing()):
+            print("Song finished, choosing new song")
             new_music = self.choose_music()
             source = discord.FFmpegPCMAudio(new_music)
-            voice_client.play(source, after = lambda e: print('DONE'))
+            self.voice_client.play(source, after = lambda e: print('DONE'))
             return
         
         # else do nothing
