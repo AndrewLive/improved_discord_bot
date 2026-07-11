@@ -58,7 +58,7 @@ class Ambience(commands.Cog):
             return
 
         # if current song is finished, play new song
-        if (!self.voice_client.is_playing()):
+        if (not self.voice_client.is_playing()):
             new_music = self.choose_music()
             source = discord.FFmpegPCMAudio(new_music)
             voice_client.play(source, after = lambda e: print('DONE'))
