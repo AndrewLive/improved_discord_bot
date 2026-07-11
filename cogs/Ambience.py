@@ -46,7 +46,7 @@ class Ambience(commands.Cog):
     @tasks.loop(seconds=1)
     async def ambience_loop(self):
         # if in no channel, no need to do anything
-        if (self.current_channel = None):
+        if (self.current_channel == None):
             return
 
         # if all members leave channel, make bot also leave
