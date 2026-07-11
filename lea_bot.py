@@ -13,6 +13,7 @@ from cogs.Translate import Translate
 from cogs.SunTzu import SunTzu
 from cogs.Misc import Misc
 from cogs.Blackjack import Blackjack
+from cogs.Ambience import Ambience
 
 from cogs.EmbedTest import EmbedTest
 
@@ -45,6 +46,8 @@ async def on_ready():
     print('Misc Cog added successfully')
     await bot.add_cog(Blackjack(bot))
     print('Blackjack Cog added successfully')
+    await bot.add_cog(Ambience(bot))
+    print('Ambience Cog added successfully')
 
     # await bot.add_cog(EmbedTest(bot))
     # print('EmbedTest Cog added successfully')
