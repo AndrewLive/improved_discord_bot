@@ -15,7 +15,7 @@ class Ambience(commands.Cog):
 
     # tasks:    toggle between playing and not playing if done in the same channel
     #           go to new channel and play if done in different channel
-    @commands.command(aliases=['ambience'])
+    @commands.command(aliases=['amb'])
     async def ambience(self, ctx):
         """
         Plays nice ambience music in the background of the current VC
